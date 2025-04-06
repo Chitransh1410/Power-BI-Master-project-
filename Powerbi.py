@@ -4,34 +4,32 @@ import os
 
 app = Flask(__name__)
 
-# Root route to avoid 404 error
 @app.route('/')
-def home():
-    return "✅ Welcome to the Live Stock API! Use /stocks to view the latest data."
-
-@app.route('/stocks')
 def get_stocks():
     symbols = ['RELIANCE.NS', 'TCS.NS', 'INFY.NS', 'SBIN.NS', 'HDFCBANK.NS']
     rows = []
     for sym in symbols:
         stock = yf.Ticker(sym)
         info = stock.info
-        rows.append({
-            'Company': info.get('longName'),
+
+        row = {
+            'Company': info.get('longName') or sym,
             'Symbol': sym,
-            'Current Price': info.get('currentPrice'),
-            'Open': info.get('open'),
-            'Day High': info.get('dayHigh'),
-            'Day Low': info.get('dayLow'),
-            'Previous Close': info.get('previousClose'),
-            'Volume': info.get('volume'),
-            'Market Cap': info.get('marketCap'),
-            'P/E Ratio': info.get('trailingPE'),
-            '52W High': info.get('fiftyTwoWeekHigh'),
-            '52W Low': info.get('fiftyTwoWeekLow'),
-            'Sector': info.get('sector'),
-            'Industry': info.get('industry')
-        })
+            'Current Price': info.get('currentPrice') or 0,
+            'Open': info.get('open') or 0,
+            'Day High': info.get('dayHigh') or 0,
+            'Day Low': info.get('dayLow') or 0,
+            'Previous Close': info.get('previousClose') or 0,
+            'Volume': info.get('volume') or 0,
+            'Market Cap': info.get('marketCap') or 0,
+            'P/E Ratio': info.get('trailingPE') or 0,
+            '52W High': info.get('fiftyTwoWeekHigh') or 0,
+            '52W Low': info.get('fiftyTwoWeekLow') or 0,
+            'Sector': info.get('sector') or 'N/A',
+            'Industry': info.get('industry') or 'N/A'
+        }
+        rows.append(row)
+
     return jsonify(rows)
 
 if __name__ == '__main__':
